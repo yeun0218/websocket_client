@@ -1,23 +1,32 @@
-.system-message-container {
+.messages-wrapper {
   display: flex;
-
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  max-height: calc(100vh - 150px);  /* 입력창을 제외한 전체 화면 높이 */
+  /*overflow-y: auto; /*스크롤 가능*/ 
+  padding: 10px;
+  background-color: #f0f4f8; /* 연한 배경색 */
 }
 
-.system-message {
-  background-color: #55667758;
-  border-radius: 100px;
+.no-messages {
   text-align: center;
-  color: white;
-  padding: 2px 15px;
-  font-size: 14px;
+  color: #999;
+  margin-top: 20px;
 }
+
+.message-container {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
 .my-message-container {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 5px;
+  /* flex-direction: row-reverse; */
 }
+
 .my-message {
   background-color: #f7e600;
   border-radius: 8px;
@@ -26,13 +35,15 @@
   font-size: 12px;
 }
 
-.your-message-container {
+.other-message-container {
   display: flex;
   justify-content: flex-start;
   /* margin-bottom: 5px; */
   align-items: center;
+  /* flex-direction: row; */
 }
-.your-message {
+
+.other-message {
   background-color: white;
   border-radius: 8px;
   padding: 8px;
@@ -40,9 +51,59 @@
   font-size: 12px;
 }
 
+.system-message-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.system-message {
+  background-color: #e7e7e7; /* 연한 회색 */
+  color: #333; /* 진한 회색 */
+  padding: 5px 15px;
+  border-radius: 15px;
+  font-size: 12px;
+  text-align: center;
+  max-width: 80%;
+}
+
 .profile-image {
-  width: 38px;
-  height: 38px;
-  border-radius: 100px;
-  margin-right: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin-right: 10px; /* 상대방 메시지 */
+  margin-left: 10px; /* 내 메시지 */
+  display: inline-block; /* 첫 메시지일 때 표시 */
+}
+
+.profile-placeholder {
+  width: 36px;
+  height: 36px;
+  margin-right: 10px; /* 왼쪽 메시지 여백 */
+  margin-left: 10px; /* 오른쪽 메시지 여백 */
+}
+
+.my-message-container .profile-image {
+  display: none; /* 내 메시지에서는 프로필 이미지 숨김 */
+}
+
+/* 메시지 박스 */
+.message {
+  max-width: fit-content;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  position: relative;
+  /* background-color: #d1e7dd;
+  color: #0f5132; */
+}
+
+/* 메시지 시간 */
+.message-time {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  margin-top: 5px;
+  text-align: right;
 }

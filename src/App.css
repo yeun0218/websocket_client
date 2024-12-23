@@ -1,3 +1,28 @@
+/* .App {
+  height:100vh;
+  background-image: url("../public/background.png");
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 28rem;
+  position: relative;
+} */
+
+/* .App {
+  height: 100vh; /* 전체 화면 높이 
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* 스크롤 제거 
+}
+
+.chat-container {
+  flex: 1; /* 화면 크기에 맞게 채팅 영역 확장 
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* 메시지가 항상 하단에 표시 
+  padding: 10px;
+  background-color: #f7f7f7;
+} */
+
 .App {
   height:100vh;
   background-image: url("../public/background.png");
@@ -5,6 +30,27 @@
   margin-right: auto;
   max-width: 28rem;
   position: relative;
+}
+
+.header {
+  background-color: #f0f4f8; /* 헤더 배경색 */
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 1px solid #ccc; /* 헤더 아래 경계선 */
+}
+
+.chat-container {
+  flex: 1; /* 화면에서 남은 공간을 채움 */
+  overflow-y: auto; /*채팅 내용 스크롤 가능 */
+  padding: 10px;
+  background-color: #f7f7f7;
+}
+
+.footer {
+  background-color: #fff; /* 입력창 배경색 */
+  padding: 10px;
+  border-top: 1px solid #ccc; /* 입력창 위 경계선 */
 }
 
 
