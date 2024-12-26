@@ -1,60 +1,86 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
 import socket from "../../../server.js";
-import { Button } from "@mui/base/Button"
-import MessageContainer from "../../MessageContainer/MessageContainer";
-import InputField from "../../InputField/InputField";
-import './chatPageStyle.css'
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 
-const ChatPage = ({user}) => {
-    const [messageList, setMessageList] = useState([]);
-    const [message, setMessage] = useState("");
-    const navigate = useNavigate()
+function ChatPage() {
+  const [messageList, setMessageList] = useState([]);
+  const [message, setMessage] = useState("");
+  const location = useLocation();
+  const user = location.state?.user; // 로그인된 사용자 정보
+  
+
+  useEffect(() => {
+    console.log("ChatPage mounted. User:", user);
+
+    if (!user) {
+      return <div>로딩 중...</div>;
+    }
+
+    if (!user || !user.customer_tel) {
+      console.error("Invalid user data:", user);
+      return ;
+    }
+    // 자동 방 연결
+    const branchCode = "B004"; // 지점 코드 하드코딩
+    socket.emit("startChatWithBranch", { customerTel: user.customer_tel, branchCode }, (response) => {
+      if (!response.ok) {
+        console.error("Failed to start chat with branch:", response.message);
+      }
+    });
+
+    // 메시지 리스너 등록
+    socket.on("message", (newMessage) => {
+      setMessageList((prev) => [...prev, newMessage]);
+    });
+
+    return () => socket.off("message");
+
+  }, [user]);
+
+  const sendMessage = () => {
+    if (!user || !user.customer_tel) {
+      console.error("Cannot send message: user or customerTel is invalid.");
+      return;
+    }
     
-    useEffect(() => {
-      socket.on("message", (res) => {
-        console.log("message",res)
-        setMessageList((prevState) => prevState.concat(res));
-      });
-
-    }, []);
-
-    const leaveRoom=()=>{
-      socket.emit("leaveRoom",user,(res)=>{
-          if(res.ok) navigate("/") // 다시 채팅방 리스트 페이지로 돌아감
-      })
+    if (!message.trim()) {
+      console.error("Cannot send message: message is empty.");
+      return;
     }
   
-    const sendMessage = (event) => {
-      event.preventDefault();
-      socket.emit("sendMessage", message, (res) => {
-        if (!res.ok) {
-          console.log("error message", res.error);
-        }
-        setMessage("");
-      });
-    };
 
-    return (
+    socket.emit("sendMessage", {
+      message,
+      sender_tel: user.customer_tel,
+      sender_type: "customer",
+    }, (response) => {
+      if (response.ok) {
+        setMessageList((prev) => [...prev, response.data]);
+      } else {
+        console.error("Message send failed:", response.error);
+      }
+    });
+
+    setMessage("");
+  };
+
+  return (
+    <div>
+      <h2>성수점과 채팅</h2>
       <div>
-        <div className="App">
-        <nav>
-              <Button onClick={leaveRoom}className='back-button'>←</Button>
-              <div className='nav-user'>{user.name}</div>
-            </nav>
-          <div>
-            {messageList.length > 0 ? (
-              <MessageContainer messageList={messageList} user={user} />
-            ) : null}
-          </div>
-          <InputField
-            message={message}
-            setMessage={setMessage}
-            sendMessage={sendMessage}
-          />
-        </div>
+        {messageList.map((msg, index) => (
+          <div key={index}>{msg.message}</div>
+        ))}
       </div>
-    );
+      <input
+        type="text"
+        placeholder="메시지 입력"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+      />
+      <button onClick={sendMessage}>전송</button>
+    </div>
+  );
 }
 
-export default ChatPage
+export default ChatPage;
